@@ -106,84 +106,83 @@ public class ClientSession {
    
     public void writeToServer(Purchase purchase, BufferedWriter bw) throws Exception{
         List<Product> pl = purchase.getProductList();
-                //declare the comparators
-                Comparator<Product> comparator = Comparator.comparing(productcompare -> productcompare.getRating());
-                comparator = comparator.thenComparing(Comparator.comparing(price -> price.getPrice())).reversed();
-                //returns a comparator in descending order
+        //declare the comparators
+        Comparator<Product> comparator = Comparator.comparing(productcompare -> productcompare.getRating());
+        comparator = comparator.thenComparing(Comparator.comparing(price -> price.getPrice())).reversed();
+        //returns a comparator in descending order
                 
-
-                //iterate through the product list in a stream and sort it out
-                pl = pl.stream()
-                    .sorted(comparator)
-                    .collect(Collectors.toList())
-                    ;
-                Float budget = purchase.getBudget();
-                Float totalPrice = 0.00f;
-                List<Product> purchaseList = new ArrayList<Product>();
-                //iterate through the sorted product list, pl
-                for(Product p:pl){
-                    float productprice = p.getPrice();
-                    //check if the price, added to total, exceeds budget
-                    if((totalPrice+productprice)>budget){
-                        //System.out.printf("Product %d exceeds budget.\n",productid);
-                        continue;
-                    }
-                    else{
-                        totalPrice += productprice;
-                        purchaseList.add(p);
-                    }
+        //iterate through the product list in a stream and sort it out
+         pl = pl.stream()
+            .sorted(comparator)
+            .collect(Collectors.toList())
+            ;
+        Float budget = purchase.getBudget();
+        Float totalPrice = 0.00f;
+        List<Product> purchaseList = new ArrayList<Product>();
+        //iterate through the sorted product list, pl
+        for(Product p:pl){
+            float productprice = p.getPrice();
+            //check if the price, added to total, exceeds budget
+            if((totalPrice+productprice)>budget){
+                //System.out.printf("Product %d exceeds budget.\n",productid);
+                continue;
+            }
+            else{
+                totalPrice += productprice;
+                purchaseList.add(p);
+                }
                     
-                }
-                System.out.printf("Budget: %.2f. Price incurred: %.2f\n", budget, totalPrice);
-                //purchase.printProducts();
+        }
+        System.out.printf("Budget: %.2f. Price incurred: %.2f\n", budget, totalPrice);
+        //purchase.printProducts();
                 
-                //write
-                String request_id = purchase.getRequestID() + "\n";
-                String name = "Isaac Tee Yuan Jie\n";
-                String email = "iztyj.work@gmail.com\n";
-                float remainder = budget - totalPrice;
-                bw.write("request_id: "+request_id);
-                bw.flush();
-                bw.write("name: "+name);
-                bw.flush();
-                bw.write("email: "+email);
-                bw.flush();
-                StringBuilder sb = new StringBuilder();
-                sb.append("items: ");
-                //iterate a for loop for all the items purchased
-                for (int i = 0; i<purchaseList.size();i++){
-                    Product p = purchaseList.get(i);
-                    //get the ID of the item purchased
-                    int itemID = p.getID();
-                    //bw.write(purchaseName);
-                    //append to the stringbuilder
-                    sb.append(itemID);
-                    if(i<(purchaseList.size()-1)){
-                        bw.write(",");
-                    }
-                }
-                sb.append("\n");
-                String bwItems = sb.toString();
-                bw.write(bwItems);
-                bw.flush();
-
-                sb = new StringBuilder();
-                sb.append("spent: ");
-                sb.append(totalPrice);
-                sb.append("\n");
-                String spentString = sb.toString();
-                bw.write(spentString);
-                bw.flush();
-
-                sb = new StringBuilder();
-                sb.append("remaining: ");
-                sb.append(remainder);
-                sb.append("\n");
-                String remainderString = sb.toString();
-                bw.write(remainderString);
-                bw.flush();
-
-                bw.write(END);
-                bw.flush();
+        //write
+        String request_id = purchase.getRequestID() + "\n";
+        String name = "Isaac Tee Yuan Jie\n";
+        String email = "iztyj.work@gmail.com\n";
+        float remainder = budget - totalPrice;
+        bw.write("request_id: "+request_id);
+        bw.flush();
+        bw.write("name: "+name);
+        bw.flush();
+        bw.write("email: "+email);
+        bw.flush();
+        StringBuilder sb = new StringBuilder();
+        sb.append("items: ");
+        //iterate a for loop for all the items purchased
+        for (int i = 0; i<purchaseList.size();i++){
+            Product p = purchaseList.get(i);
+            //get the ID of the item purchased
+            int itemID = p.getID();
+            //bw.write(purchaseName);
+            //append to the stringbuilder
+            sb.append(itemID);
+            if(i<(purchaseList.size()-1)){
+                bw.write(",");
+            }
+        }
+        sb.append("\n");
+        String bwItems = sb.toString();
+        bw.write(bwItems);
+        bw.flush();
+        //
+        sb = new StringBuilder();
+        sb.append("spent: ");
+        sb.append(String.format("%.2f",totalPrice));
+        sb.append("\n");
+        String spentString = sb.toString();
+        bw.write(spentString);
+        bw.flush();
+        //
+        sb = new StringBuilder();
+        sb.append("remaining: ");
+        sb.append(String.format("%.2f",remainder));
+        sb.append("\n");
+        String remainderString = sb.toString();
+        bw.write(remainderString);
+        bw.flush();
+        //
+        bw.write(END);
+        bw.flush();
     }
 }

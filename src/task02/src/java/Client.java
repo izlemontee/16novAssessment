@@ -6,21 +6,25 @@ public class Client{
 
     public static void main (String[] args)throws Exception{
         final int DEFAULT_PORT = 3000;
+        final String DEFAULT_SERVER = "localhost";
         int port=0;
+        String serverName="";
         //check the args length for the different use cases
         switch(args.length){
             case 0:{
                 port = DEFAULT_PORT;
+                serverName = DEFAULT_SERVER;
                 break;
             }
 
             case 1:{
                 port = Integer.parseInt(args[0]);
+                serverName = DEFAULT_SERVER;
                 break;
             }
 
             case 2:{
-                String serverName = args[0];
+                serverName = args[0];
                 port = Integer.parseInt(args[1]);
                 break;
             }
@@ -30,7 +34,7 @@ public class Client{
                 break;
         }
 
-        Socket socket = new Socket("localhost",port);
+        Socket socket = new Socket(serverName,port);
         ClientSession cs = new ClientSession(socket);
         cs.start();
     }
