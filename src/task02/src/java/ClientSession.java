@@ -123,29 +123,30 @@ public class ClientSession {
         for(Product p:pl){
             float productprice = p.getPrice();
             //check if the price, added to total, exceeds budget
-            if((totalPrice+productprice)>budget){
-                //System.out.printf("Product %d exceeds budget.\n",productid);
+            if((budget-productprice)<0){
                 continue;
             }
             else{
+                budget -= productprice;
                 totalPrice += productprice;
                 purchaseList.add(p);
-                }
+            }
                     
         }
-        System.out.printf("Budget: %.2f. Price incurred: %.2f\n", budget, totalPrice);
-        //purchase.printProducts();
-                
+            
         //write
         String request_id = purchase.getRequestID() + "\n";
         String name = "Isaac Tee Yuan Jie\n";
         String email = "iztyj.work@gmail.com\n";
-        float remainder = budget - totalPrice;
+        float remainder = budget;
         bw.write("request_id: "+request_id);
+        System.out.println(request_id);
         bw.flush();
         bw.write("name: "+name);
+        System.out.println(name);
         bw.flush();
         bw.write("email: "+email);
+        System.out.println(email);
         bw.flush();
         StringBuilder sb = new StringBuilder();
         sb.append("items: ");
@@ -154,15 +155,15 @@ public class ClientSession {
             Product p = purchaseList.get(i);
             //get the ID of the item purchased
             int itemID = p.getID();
-            //bw.write(purchaseName);
             //append to the stringbuilder
             sb.append(itemID);
             if(i<(purchaseList.size()-1)){
-                bw.write(",");
+                sb.append(",");
             }
         }
         sb.append("\n");
         String bwItems = sb.toString();
+        System.out.println(bwItems);
         bw.write(bwItems);
         bw.flush();
         //
@@ -171,6 +172,7 @@ public class ClientSession {
         sb.append(String.format("%.2f",totalPrice));
         sb.append("\n");
         String spentString = sb.toString();
+        System.out.println(spentString);
         bw.write(spentString);
         bw.flush();
         //
@@ -179,10 +181,12 @@ public class ClientSession {
         sb.append(String.format("%.2f",remainder));
         sb.append("\n");
         String remainderString = sb.toString();
+        System.out.println(remainderString);
         bw.write(remainderString);
         bw.flush();
         //
         bw.write(END);
+        System.out.println(END);
         bw.flush();
     }
 }
