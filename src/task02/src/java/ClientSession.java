@@ -102,6 +102,7 @@ public class ClientSession {
                 stop = true;
             }
         }
+        socket.close();
     }
    
     public void writeToServer(Purchase purchase, BufferedWriter bw) throws Exception{
