@@ -7,9 +7,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.Console;
 import java.util.*;
-import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class ClientSession {
@@ -45,9 +43,6 @@ public class ClientSession {
             line = br.readLine().trim();
             //will keep repeating this, taking in messages from server.
             //server will stop sending messages when it reaches "prod_end" but client will still keep polling
-            //System.out.println(line);
-
-            //may have to create a new object for products
 
             String[] lineSplit = line.split(":");
             //switch cases to check through the lines and get the info
@@ -95,19 +90,27 @@ public class ClientSession {
                     break;
                 }
             }
-
-            //after creating the product and purchase database, run the algorithm
             //sort the products according to rating and price
 
-            //once it has collected everything, denoted by the product counter equal to the item count
+            //once it has collected everything, denoted by the product counter equal to the item count,
+            //write to the server
             if((productCounter == item_count)&&(productCounter>0)){
-                Map<String,Product>pm = purchase.getProductMap();
-                List<Product> pl = purchase.getProductList();
+                //method writeToServer found after this method
+                writeToServer(purchase, bw);
+                System.out.println(br.readLine());
+                //end the session
+                stop = true;
+            }
+        }
+    }
+   
+    public void writeToServer(Purchase purchase, BufferedWriter bw) throws Exception{
+        List<Product> pl = purchase.getProductList();
                 //declare the comparators
                 Comparator<Product> comparator = Comparator.comparing(productcompare -> productcompare.getRating());
                 comparator = comparator.thenComparing(Comparator.comparing(price -> price.getPrice())).reversed();
                 //returns a comparator in descending order
-                //
+                
 
                 //iterate through the product list in a stream and sort it out
                 pl = pl.stream()
@@ -119,13 +122,7 @@ public class ClientSession {
                 List<Product> purchaseList = new ArrayList<Product>();
                 //iterate through the sorted product list, pl
                 for(Product p:pl){
-                    int productid = p.getID();
-                    float productrate = p.getRating();
                     float productprice = p.getPrice();
-                    String productdes = p.getTitle();
-                    //System.out.printf("ID: %d, Title: %s\nRating: %.2f, Price: %.2f\n",
-                    //productid,productdes,productrate,productprice);
-
                     //check if the price, added to total, exceeds budget
                     if((totalPrice+productprice)>budget){
                         //System.out.printf("Product %d exceeds budget.\n",productid);
@@ -185,17 +182,8 @@ public class ClientSession {
                 String remainderString = sb.toString();
                 bw.write(remainderString);
                 bw.flush();
-                
+
                 bw.write(END);
                 bw.flush();
-                System.out.println(br.readLine());
-                stop = true;
-                //bw.close();
-            }
-
-
-        }
-
     }
-    
 }
