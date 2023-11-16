@@ -27,14 +27,9 @@ public class csvReader{
                 .map(line -> line.split(","))
                 //create new app object
                 .map(line -> new Application(line[NAME_COL],line[CATEGORY_COL],line[RATING_COL]))
-                //filter out the apps that don't have a valid numerical rating
-                //.filter(app -> !app.getRating().isNaN())
                 //terminate the stream and return a map<String,list>
                 .collect(Collectors.groupingBy(app -> app.getCategory()))
             ;
-          
-            System.out.println("Csv printed.");
-            System.out.println(categorised.size());
         }
         int lineCount = 0;
         for(String key:categorised.keySet()){
@@ -71,7 +66,7 @@ public class csvReader{
             System.out.printf(" Highest: %s,%.2f\n",highestName,highest);
             System.out.printf(" Lowest: %s,%.2f\n",lowestName,lowest);
             System.out.printf(" Average: %.2f\n",average);
-            System.out.printf(" Count: %d\n",approved.size());
+            System.out.printf(" Count: %d\n",(categorised.get(key)).size());
             System.out.printf(" Discarded: %d\n",discarded.size());
         }
         System.out.printf("Total lines read: %d",lineCount);
