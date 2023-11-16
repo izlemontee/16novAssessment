@@ -3,9 +3,9 @@ package src.java;
 
 public class Application {
 
-    private String name;
-    private String category;
-    private Float rating;
+    private final String name;
+    private final String category;
+    private final Float rating;
 
     public Application(String name, String category, String ratingString){
         this.name = name;

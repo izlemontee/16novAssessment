@@ -45,7 +45,6 @@ public class csvReader{
                 Float rating = app.getRating();
                 if(rating.isNaN()){
                     discarded.add(app);
-                    //categorised.get(key).remove(app);
                     continue;
                 }
                 else{
@@ -63,16 +62,12 @@ public class csvReader{
             }
             Float average = total/approved.size();
             System.out.println("CATEGORY: "+key.toUpperCase());
-            System.out.printf(" Highest: %s,%.2f\n",highestName,highest);
-            System.out.printf(" Lowest: %s,%.2f\n",lowestName,lowest);
-            System.out.printf(" Average: %.2f\n",average);
-            System.out.printf(" Count: %d\n",(categorised.get(key)).size());
-            System.out.printf(" Discarded: %d\n",discarded.size());
+            System.out.printf("     Highest: %s,%.2f\n",highestName,highest);
+            System.out.printf("     Lowest: %s,%.2f\n",lowestName,lowest);
+            System.out.printf("     Average: %.2f\n",average);
+            System.out.printf("     Count: %d\n",(categorised.get(key)).size());
+            System.out.printf("     Discarded: %d\n",discarded.size());
         }
         System.out.printf("Total lines read: %d",lineCount);
-
-
-
     }
-    
 }
